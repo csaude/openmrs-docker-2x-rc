@@ -4,7 +4,7 @@ After=network.target docker.service
 
 # Remember to replace the <path-to-project-directory> with the actual correct path.
 [Service]
-ExecStart=/usr/bin/docker-compose -f <path-to-project-directory>/docker-compose.yml start
+ExecStart=/usr/local/bin/docker-compose -f <path-to-project-directory>/docker-compose.yml start
 
 [Install]
 WantedBy=multi-user.target
