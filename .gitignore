@@ -9,7 +9,7 @@ data/OpenMRS/lucene
 data/OpenMRS/owa/
 data/OpenMRS/REPORT_RESULTS
 data/OpenMRS/person_images
-data/logs
+data/logs/
 
 # Ignore the provided dump file
 mysql/openmrs.sql
