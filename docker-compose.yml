@@ -28,6 +28,9 @@ services:
            - type: bind
              source: ./data/OpenMRS
              target: /usr/local/tomcat/.OpenMRS
+           - type: bind
+             source: ./data/logs
+             target: /usr/local/tomcat/logs
          healthcheck:
             test: "/usr/bin/mysql --user=root --password=root --execute \"SHOW DATABASES;\""
             interval: 2s

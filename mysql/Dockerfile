@@ -10,8 +10,9 @@ ADD mysql.cnf /root/.my.cnf
 ADD localtime /etc/localtime
 ADD openmrs.sql /openmrs.sql
 
-COPY run.sh /run.sh
+RUN chmod 664 /root/.my.cnf
 
+COPY run.sh /run.sh
 
 EXPOSE 3306
 
