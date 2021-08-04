@@ -1,4 +1,3 @@
-openmrs.log
 
 # Don't commit deployed openmrs
 data/webapps/openmrs/
@@ -9,6 +8,7 @@ data/OpenMRS/lucene
 data/OpenMRS/owa/
 data/OpenMRS/REPORT_RESULTS
 data/OpenMRS/person_images
+data/OpenMRS/openmrs.log
 data/logs/
 
 # Ignore the provided dump file
