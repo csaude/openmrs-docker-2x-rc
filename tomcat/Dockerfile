@@ -1,4 +1,4 @@
-FROM tomcat:8-jre8-alpine
+FROM tomcat:8-jre8-temurin
 
 RUN mkdir -p /usr/local/tomcat/.OpenMRS
 
