@@ -39,7 +39,7 @@ else
   	rm -f "$tfile"
 
 	echo "Importing data to $MYSQL_DATABASE database"
-	cat openmrs.sql | mysql_embedded -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"
+	#cat openmrs.sql | mysql_embedded -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"
 fi
 echo 'Starting server'
 exec /usr/sbin/mysqld --user=root --console
