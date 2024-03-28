@@ -1,4 +1,4 @@
-FROM mysql:8.0
+FROM mysql:8.0.36
 
 ENV MYSQL_ROOT_PASSWORD=root
 ENV MYSQL_DATABASE=openmrs_prod
