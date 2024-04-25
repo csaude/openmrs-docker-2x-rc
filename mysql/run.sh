@@ -67,12 +67,12 @@ EOF
     # Executa esses alter tables para resolver problemas identificados durante a migração da plataforma 2.3.3 para 2.6.1
     mysql -hlocalhost -uroot -p"$MYSQL_ROOT_PASSWORD" <<EOF
     USE \`$MYSQL_DATABASE\`;
-    alter table location modify date_created timestamp not null;
-    alter table patient_state modify date_created timestamp not null;
-    alter table patient_identifier modify date_created timestamp not null;
-    alter table orders modify date_created timestamp not null;
-    alter table reporting_report_design_resource modify date_created timestamp not null;
-    alter table users modify date_created timestamp not null;
+    alter table location modify date_created datetime not null;
+    alter table patient_state modify date_created datetime not null;
+    alter table patient_identifier modify date_created datetime not null;
+    alter table orders modify date_created datetime not null;
+    alter table reporting_report_design_resource modify date_created datetime not null;
+    alter table users modify date_created datetime not null;
 EOF
     fi
 fi
