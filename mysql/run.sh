@@ -18,17 +18,15 @@ if [ -d "$MYSQL_DATA_DIRECTORY/mysql" ]; then
     echo 'Data directory already initialized'
     echo 'Starting server'
     exec /usr/sbin/mysqld --user=mysql --console --datadir="$MYSQL_DATA_DIRECTORY" 
-
 else
     echo 'Initializing database'
     mysqld --initialize --user=root --datadir="$MYSQL_DATA_DIRECTORY" > mysql_startup_log.txt 2>&1
     echo 'Database initialized'
 
     if grep -q 'A temporary password is generated for root@localhost:' mysql_startup_log.txt; then
-        # Extrai a senha temporária do arquivo de log
         temp_password=$(grep 'A temporary password is generated for root@localhost:' mysql_startup_log.txt | awk '{print $NF}')
     else
-        echo 'Senha temporária não encontrada no log de inicialização do MySQL'
+        echo 'Temporary password not found in MySQL startup log'
     fi
 
     # Inicia o servidor MySQL
@@ -58,21 +56,108 @@ EOF
     GRANT ALL ON \`$MYSQL_DATABASE\`.* to '$MYSQL_USER'@'localhost' WITH GRANT OPTION;
     FLUSH PRIVILEGES;
 EOF
-    
-    # Importa os dados, se disponíveis
-    if [ -f "openmrs.sql" ]; then
-        echo "Importing data to $MYSQL_DATABASE database"
-        mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < openmrs.sql
+fi
+
+# Armazena o valor original de sql_mode
+original_sql_mode=$(mysql -hlocalhost -uroot -p"$MYSQL_ROOT_PASSWORD" -se "SELECT @@sql_mode")
+
+# Aumenta o innodb_lock_wait_timeout antes da restauração
+mysql -hlocalhost -uroot -p"$MYSQL_ROOT_PASSWORD" <<EOF
+SET GLOBAL innodb_lock_wait_timeout = 600;
+EOF
+
+# Importa os dados, se disponíveis
+if [ -f "openmrs.sql" ]; then
+    echo "Importando dados para o banco de dados $MYSQL_DATABASE"
+    mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < openmrs.sql
 
     # Executa esses alter tables para resolver problemas identificados durante a migração da plataforma 2.3.3 para 2.6.1
     mysql -hlocalhost -uroot -p"$MYSQL_ROOT_PASSWORD" <<EOF
     USE \`$MYSQL_DATABASE\`;
-    alter table location modify date_created datetime not null;
-    alter table patient_state modify date_created datetime not null;
-    alter table patient_identifier modify date_created datetime not null;
-    alter table orders modify date_created datetime not null;
-    alter table reporting_report_design_resource modify date_created datetime not null;
-    alter table users modify date_created datetime not null;
+    START TRANSACTION;
+    ALTER TABLE location MODIFY date_created DATETIME DEFAULT CURRENT_TIMESTAMP;
+    ALTER TABLE patient_state MODIFY date_created DATETIME DEFAULT CURRENT_TIMESTAMP;
+    ALTER TABLE patient_identifier MODIFY date_created DATETIME DEFAULT CURRENT_TIMESTAMP;
+    ALTER TABLE orders MODIFY date_created DATETIME DEFAULT CURRENT_TIMESTAMP;
+    ALTER TABLE reporting_report_design_resource MODIFY date_created DATETIME DEFAULT CURRENT_TIMESTAMP;
+    ALTER TABLE users MODIFY date_created DATETIME DEFAULT CURRENT_TIMESTAMP;
+    ALTER TABLE concept_reference_source MODIFY date_created DATETIME DEFAULT CURRENT_TIMESTAMP;
+    ALTER TABLE concept_name MODIFY date_created DATETIME DEFAULT CURRENT_TIMESTAMP;
+    SET GLOBAL innodb_lock_wait_timeout = 60;
+    SET GLOBAL sql_mode = 'NO_ENGINE_SUBSTITUTION';
+    COMMIT;
 EOF
-    fi
 fi
+
+# Atualiza estatísticas das tabelas em lotes
+echo "Atualizando estatísticas das tabelas em lotes"
+BATCH_SIZE=10
+
+# Função para executar ANALYZE TABLE em um lote de tabelas
+run_analyze_batch() {
+  local batch=("$@")
+  local query=""
+
+  for table in "${batch[@]}"; do
+    query+="ANALYZE TABLE \`${table}\`; "
+  done
+
+  mysql -uroot -p"$MYSQL_ROOT_PASSWORD" -e "USE \`${MYSQL_DATABASE}\`; ${query}"
+}
+
+# Obtenha a lista de tabelas
+tables=$(mysql -uroot -p"$MYSQL_ROOT_PASSWORD" -N -e "SELECT table_name FROM information_schema.tables WHERE table_schema = '${MYSQL_DATABASE}'")
+
+# Converta a lista de tabelas em um array
+tables_array=($tables)
+
+# Processar as tabelas em lotes
+total_tables=${#tables_array[@]}
+for (( i=0; i<total_tables; i+=BATCH_SIZE )); do
+  batch=("${tables_array[@]:i:BATCH_SIZE}")
+  run_analyze_batch "${batch[@]}"
+done
+
+# Otimiza tabelas em lotes
+echo "Otimização das tabelas em lotes"
+run_optimize_batch() {
+  local batch=("$@")
+  local query=""
+
+  for table in "${batch[@]}"; do
+    query+="OPTIMIZE TABLE \`${table}\`; "
+  done
+
+  mysql -uroot -p"$MYSQL_ROOT_PASSWORD" -e "USE \`${MYSQL_DATABASE}\`; ${query}"
+}
+
+# Processar as tabelas em lotes para otimização
+for (( i=0; i<total_tables; i+=BATCH_SIZE )); do
+  batch=("${tables_array[@]:i:BATCH_SIZE}")
+  run_optimize_batch "${batch[@]}"
+done
+
+# Rebuild indexes em lotes
+echo "Reconstruindo índices em lotes"
+run_rebuild_indexes_batch() {
+  local batch=("$@")
+  local query=""
+
+  for table in "${batch[@]}"; do
+    query+="ALTER TABLE \`${table}\` ENGINE = InnoDB; "
+  done
+
+  mysql -uroot -p"$MYSQL_ROOT_PASSWORD" -e "USE \`${MYSQL_DATABASE}\`; ${query}"
+}
+
+# Processar as tabelas em lotes para reconstrução de índices
+for (( i=0; i<total_tables; i+=BATCH_SIZE )); do
+  batch=("${tables_array[@]:i:BATCH_SIZE}")
+  run_rebuild_indexes_batch "${batch[@]}"
+done
+
+echo "Atualizando sql_mode para o valor original"
+# Restaura o valor original de sql_mode
+mysql -hlocalhost -uroot -p"$MYSQL_ROOT_PASSWORD" <<EOF
+SET GLOBAL sql_mode = '$original_sql_mode';
+EOF
