@@ -1,0 +1,37 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="sync-response-processor" errorHandlerRef="shutdownErrorHandler">
+
+        <from uri="direct:sync-response-processor" />
+
+        <log loggingLevel="DEBUG" message="Start: route with id ${routeId}" />
+
+        <setProperty name="syncResponse">
+            <simple>${body}</simple>
+        </setProperty>
+
+        <log loggingLevel="DEBUG" message="Processing sender sync response -> ${exchangeProperty.syncResponse}" />
+
+        <toD uri="jpa:SenderSyncMessage?query=SELECT m FROM SenderSyncMessage m WHERE m.messageUuid='${exchangeProperty.syncResponse.messageUuid}' AND m.status='SENT'" />
+
+        <choice>
+            <when>
+                <simple>${body.size()} == 1</simple>
+                <log loggingLevel="DEBUG" message="Fetched ${body.size()} sender sync message(s) matching message uuid ${exchangeProperty.syncResponse.messageUuid}" />
+
+                <bean ref="senderService" method="archiveSyncMessage(${body[0]}, ${exchangeProperty.syncResponse.dateReceivedByReceiver})" />
+            </when>
+            <otherwise>
+                <log message="No sync message was found with message uuid ${exchangeProperty.syncResponse.messageUuid}" />
+            </otherwise>
+        </choice>
+
+        <log loggingLevel="DEBUG" message="Removing processed sender sync response with id: ${exchangeProperty.syncResponse.id}" />
+
+        <bean ref="senderSyncResponseRepository" method="delete(${exchangeProperty.syncResponse})" />
+
+        <log loggingLevel="DEBUG" message="Successfully removed sender sync response with id: ${exchangeProperty.syncResponse.id}" />
+
+        <log loggingLevel="DEBUG" message="End: route with id ${routeId}" />
+        
+    </route>
+</routes>
