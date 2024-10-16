@@ -21,6 +21,10 @@ services:
              - network
          depends_on:
              - "refapp-db"
+         environment:
+             DISA_ENVIRONMENT:
+             DISA_API_USERNAME:
+             DISA_API_PASSWORD:
          volumes:
            - type: bind
              source: ./data/webapps
