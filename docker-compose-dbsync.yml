@@ -37,10 +37,10 @@ services:
             timeout: 30s
             retries: 15
 
-     openmrs-eip-sender:
+     dbsync-remote:
        image: openjdk:17-alpine
        command: /home/eip/scripts/install.sh
-       container_name: openmrs-eip-sender
+       container_name: dbsync-remote
        network_mode: host
        environment:
          - curr_git_branch=main

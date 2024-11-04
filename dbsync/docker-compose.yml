@@ -1,9 +1,9 @@
 version: '3.2'
 services:
-    openmrs-eip-sender:
+    dbsync-remote:
         image: openjdk:17-alpine
         command: /home/eip/scripts/install.sh
-        container_name: openmrs-eip-sender
+        container_name: dbsync-remote
         network_mode: host
         environment:
             - curr_git_branch=main
