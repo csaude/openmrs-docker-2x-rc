@@ -3,40 +3,18 @@
 #
 #ENV
 HOME_DIR="/home/eip"
-
-########### STOCK ENVIRONMENT ###################
 SETUP_STOCK_DIR="/home/openmrs-eip-docker"
 SETUP_STOCK_STUFF_DIR="$SETUP_STOCK_DIR"
 SETUP_STOCK_SCRIPTS_DIR="$SETUP_STOCK_STUFF_DIR/scripts"
 GIT_BRANCHES_DIR="$SETUP_STOCK_STUFF_DIR/git/branches"
-
-############ SITE ENVIRONMENT #######################
-SITE_SETUP_BASE_DIR="$HOME_DIR/openmrs-eip-docker"
-SITE_STUFF_DIR="$SITE_SETUP_BASE_DIR/release_stuff"
-SITE_SETUP_SCRIPTS_DIR="$SITE_STUFF_DIR/scripts"
-
-EPTSSYNC_SETUP_STUFF_DIR="$SITE_STUFF_DIR/etc/eptssync"
-EPTSSYNC_HOME_DIR="$HOME_DIR/application/eptssync"
-
-################# ENVIRONMENT #########################
-SCRIPTS_DIR="$HOME_DIR/scripts"
 INSTALL_FINISHED_REPORT_FILE="$HOME_DIR/install_finished_report_file"
 LOG_DIR="$HOME_DIR/logs/install"
 LOG_FILE="$LOG_DIR/install.log"
 UPGRADE_LOG_DIR="$LOG_DIR/upgrade"
-
-################ RELEASE ###############################
-SHARED_DIR="$HOME_DIR/shared"
-RELEASES_PACKAGES_DIR="$SHARED_DIR/releases"
-
-
 APK_CMD=$(which apk)
 
 . $SETUP_STOCK_SCRIPTS_DIR/commons.sh
 . $SETUP_STOCK_SCRIPTS_DIR/try_to_load_environment.sh
-
-isDockerInstallation
-isDocker=$?
 
 if [ -f "$INSTALL_FINISHED_REPORT_FILE" ]; then
         logToScreenAndFile "INSTALLATION FINISHED" $LOG_FILE
@@ -70,4 +48,4 @@ else
 	$SITE_SETUP_SCRIPTS_DIR/performe_initial_installation.sh
 fi
 
-$SCRIPTS_DIR/init.sh
+$SCRIPTS_DIR/startup.sh
