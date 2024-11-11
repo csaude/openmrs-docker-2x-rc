@@ -13,6 +13,12 @@ LOG_FILE="$LOG_DIR/install.log"
 UPGRADE_LOG_DIR="$LOG_DIR/upgrade"
 APK_CMD=$(which apk)
 
+
+SETUP_BASE_DIR="$HOME_DIR/openmrs-eip-docker"
+STUFF_DIR="$SETUP_BASE_DIR/release_stuff"
+SETUP_SCRIPTS_DIR="$STUFF_DIR/scripts"
+
+
 . $SETUP_STOCK_SCRIPTS_DIR/commons.sh
 . $SETUP_STOCK_SCRIPTS_DIR/try_to_load_environment.sh
 
@@ -45,7 +51,7 @@ else
         fi
 	
 	$SETUP_STOCK_SCRIPTS_DIR/pull_dbsync_deployment_project_from_git.sh "$SETUP_STOCK_STUFF_DIR" 2>&1 | tee -a $LOG_FILE
-	$SITE_SETUP_SCRIPTS_DIR/performe_initial_installation.sh
+	$SETUP_SCRIPTS_DIR/performe_initial_installation.sh
 fi
 
 $SCRIPTS_DIR/startup.sh
