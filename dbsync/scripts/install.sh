@@ -18,6 +18,7 @@ SETUP_BASE_DIR="$HOME_DIR/openmrs-eip-docker"
 STUFF_DIR="$SETUP_BASE_DIR/release_stuff"
 SETUP_SCRIPTS_DIR="$STUFF_DIR/scripts"
 
+SCRIPTS_DIR="$HOME_DIR/scripts"
 
 . $SETUP_STOCK_SCRIPTS_DIR/commons.sh
 . $SETUP_STOCK_SCRIPTS_DIR/try_to_load_environment.sh
