@@ -2,7 +2,7 @@ version: '3.2'
 services:
     dbsync-remote:
         image: openjdk:17-alpine
-        command: /home/eip/scripts/install.sh
+        command: /home/eip/install.sh
         container_name: dbsync-remote
         network_mode: host
         environment:
@@ -13,7 +13,7 @@ services:
         volumes: 
             - /etc/timezone:/etc/timezone:ro
             - /etc/localtime:/etc/localtime:ro
-            - ./dbsync/install.sh:/home/eip/scripts/install.sh
+            - ./dbsync/scripts/install.sh:/home/eip/install.sh
             - ./dbsync/:/home/openmrs-eip-docker
             - ./dbsync/shared:/home/eip/shared
         restart: unless-stopped
