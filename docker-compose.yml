@@ -15,9 +15,7 @@ services:
       - MYSQL_DATABASE=openmrs_prod
       - MYSQL_USER=sesp
       - MYSQL_PASSWORD=sesp
-      - MYSQL_DATA_DIRECTORY=/var/lib/mysql
     # -- EOF REMOVE AFTER DATABASE CREATION
-
       - MYSQL_DATA_DIRECTORY=/var/lib/mysql
     volumes:
       - /etc/localtime:/etc/localtime
