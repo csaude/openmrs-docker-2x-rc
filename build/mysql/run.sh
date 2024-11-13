@@ -8,6 +8,9 @@ fi
 
 if [ -d "$MYSQL_DATA_DIRECTORY" ]; then
     echo 'MySQL data directory exists'
+    if [ -f "$MYSQL_DATA_DIRECTORY/README.md" ]; then
+      rm -f $MYSQL_DATA_DIRECTORY/README.md
+    fi
 else
     echo 'MySQL data directory does not exist'
     echo "Creating MySQL data directory: $MYSQL_DATA_DIRECTORY"
@@ -20,15 +23,15 @@ if [ -d "$MYSQL_DATA_DIRECTORY/mysql" ]; then
     exec /usr/sbin/mysqld --user=mysql --console --datadir="$MYSQL_DATA_DIRECTORY" 
 else
     echo 'Initializing database'
-    mysqld --initialize --user=root --datadir="$MYSQL_DATA_DIRECTORY" > mysql_startup_log.txt 2>&1
+    mysqld --initialize --user=root --datadir="$MYSQL_DATA_DIRECTORY" > /var/log/mysql/mysql_startup_log.txt 2>&1
     echo 'Database initialized'
 
-    if grep -q 'A temporary password is generated for root@localhost:' mysql_startup_log.txt; then
-        temp_password=$(grep 'A temporary password is generated for root@localhost:' mysql_startup_log.txt | awk '{print $NF}')
+    if grep -q 'A temporary password is generated for root@localhost:' /var/log/mysql/mysql_startup_log.txt; then
+        temp_password=$(grep 'A temporary password is generated for root@localhost:' /var/log/mysql/mysql_startup_log.txt | awk '{print $NF}')
     else
         echo 'Temporary password not found in MySQL startup log'
     fi
-
+    
     # Inicia o servidor MySQL
     echo 'Starting server'
     /usr/sbin/mysqld --user=mysql --datadir="$MYSQL_DATA_DIRECTORY" &
@@ -67,9 +70,9 @@ SET GLOBAL innodb_lock_wait_timeout = 600;
 EOF
 
 # Importa os dados, se disponíveis
-if [ -f "openmrs.sql" ]; then
+if [ -f "/scripts/openmrs.sql" ]; then
     echo "Importando dados para o banco de dados $MYSQL_DATABASE"
-    mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < openmrs.sql
+    mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < /scripts/openmrs.sql
 
     # Executa esses alter tables para resolver problemas identificados durante a migração da plataforma 2.3.3 para 2.6.1
     mysql -hlocalhost -uroot -p"$MYSQL_ROOT_PASSWORD" <<EOF
