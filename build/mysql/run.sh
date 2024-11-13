@@ -26,12 +26,12 @@ else
     mysqld --initialize --user=root --datadir="$MYSQL_DATA_DIRECTORY" > /var/log/mysql/mysql_startup_log.txt 2>&1
     echo 'Database initialized'
 
-    if grep -q 'A temporary password is generated for root@localhost:' mysql_startup_log.txt; then
+    if grep -q 'A temporary password is generated for root@localhost:' /var/log/mysql/mysql_startup_log.txt; then
         temp_password=$(grep 'A temporary password is generated for root@localhost:' /var/log/mysql/mysql_startup_log.txt | awk '{print $NF}')
     else
         echo 'Temporary password not found in MySQL startup log'
     fi
-
+    
     # Inicia o servidor MySQL
     echo 'Starting server'
     /usr/sbin/mysqld --user=mysql --datadir="$MYSQL_DATA_DIRECTORY" &
