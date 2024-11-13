@@ -1,1 +1,0 @@
-update sender_sync_message set event_date=now() where status='SENT' AND event_date IS NULL;
