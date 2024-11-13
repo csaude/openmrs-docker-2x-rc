@@ -4,6 +4,7 @@ services:
     image: hub.csaude.org.mz/sesp/mysql:8.4.2
     container_name: refapp-db
     stop_grace_period: 2h
+    restart: unless-stopped
     ports:
       - "3320:3306"
     networks:
@@ -29,6 +30,7 @@ services:
     image: docker pull hub.csaude.org.mz/sesp/tomcat:9.0.91
     container_name: refapp-tomcat
     stop_grace_period: 30m 
+    restart: unless-stopped
     ports:
       - "8080:8080"
     networks:
