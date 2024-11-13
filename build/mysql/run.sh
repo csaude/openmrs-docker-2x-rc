@@ -67,9 +67,9 @@ SET GLOBAL innodb_lock_wait_timeout = 600;
 EOF
 
 # Importa os dados, se disponíveis
-if [ -f "openmrs.sql" ]; then
+if [ -f "/scripts/openmrs.sql" ]; then
     echo "Importando dados para o banco de dados $MYSQL_DATABASE"
-    mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < openmrs.sql
+    mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < /scripts/openmrs.sql
 
     # Executa esses alter tables para resolver problemas identificados durante a migração da plataforma 2.3.3 para 2.6.1
     mysql -hlocalhost -uroot -p"$MYSQL_ROOT_PASSWORD" <<EOF
