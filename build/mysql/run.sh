@@ -8,7 +8,7 @@ fi
 
 if [ -d "$MYSQL_DATA_DIRECTORY" ]; then
     echo 'MySQL data directory exists'
-    if [ -f "$MYSQL_DATA_DIRECTORY/README.md" ]
+    if [ -f "$MYSQL_DATA_DIRECTORY/README.md" ]; then
       rm -f $MYSQL_DATA_DIRECTORY/README.md
     fi
 else
