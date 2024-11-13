@@ -8,7 +8,8 @@ ENV PATH=$CATALINA_HOME/bin:$PATH
 ENV TOMCAT_VERSION=9.0.97
 
 # Update and install required dependencies
-RUN apt-get update && \
+RUN apt-get update -y && \
+    atp-get upgrade -y && \
     apt-get install -y \
     openjdk-11-jdk \
     wget \
