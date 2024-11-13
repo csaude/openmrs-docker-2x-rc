@@ -44,7 +44,7 @@ services:
       - ./tomcat/conf/openmrs-runtime.properties:/usr/local/tomcat/openmrs-runtime.properties
       - ./tomcat/conf/setenv.sh:/usr/local/tomcat/bin/setenv.sh
       - ./tomcat/logs:/usr/local/tomcat/logs
-      - ./tomcat/data/:/usr/local/tomcat/
+      - ./tomcat/data/webapps:/usr/local/tomcat/webapps
     healthcheck:
       test: "/usr/bin/mysql --user=root --password=root --execute \"SHOW DATABASES;\""
       interval: 2s
