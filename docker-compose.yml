@@ -50,3 +50,7 @@ services:
       interval: 2s
       timeout: 30s 
       retries: 15
+
+networks:
+  network:
+    driver: bridge
