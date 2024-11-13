@@ -8,6 +8,9 @@ fi
 
 if [ -d "$MYSQL_DATA_DIRECTORY" ]; then
     echo 'MySQL data directory exists'
+    if [ -f "$MYSQL_DATA_DIRECTORY/README.md" ]
+      rm -f $MYSQL_DATA_DIRECTORY/README.md
+    fi
 else
     echo 'MySQL data directory does not exist'
     echo "Creating MySQL data directory: $MYSQL_DATA_DIRECTORY"
@@ -20,7 +23,7 @@ if [ -d "$MYSQL_DATA_DIRECTORY/mysql" ]; then
     exec /usr/sbin/mysqld --user=mysql --console --datadir="$MYSQL_DATA_DIRECTORY" 
 else
     echo 'Initializing database'
-    mysqld --initialize --user=root --datadir="$MYSQL_DATA_DIRECTORY" > mysql_startup_log.txt 2>&1
+    mysqld --initialize --user=root --datadir="$MYSQL_DATA_DIRECTORY" > /var/log/mysql/mysql_startup_log.txt 2>&1
     echo 'Database initialized'
 
     if grep -q 'A temporary password is generated for root@localhost:' mysql_startup_log.txt; then

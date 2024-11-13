@@ -1,7 +1,7 @@
 name: refapp
 services:
   refapp-db:
-    image: hub.csaude.org.mz/sesp/mysql:8.4.2
+    image: hub.csaude.org.mz/sesp/mysql:8.4.2f
     container_name: refapp-db
     stop_grace_period: 2h
     restart: unless-stopped
@@ -19,7 +19,7 @@ services:
       - MYSQL_DATA_DIRECTORY=/var/lib/mysql
     volumes:
       - /etc/localtime:/etc/localtime
-      - ./database/conf/mysql.cnf:/root/.my.cnf
+      - ./database/conf/mysql.cnf:/etc/mysql/mysql.conf
       - ./database/logs:/var/log/mysql
       - ./database/conf:/etc/mysql
       - ./database/data:/var/lib/mysql
