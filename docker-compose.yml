@@ -1,7 +1,7 @@
 name: refapp
 services:
   refapp-db:
-    image: hub.csaude.org.mz/sesp/mysql:8.4.2f
+    image: hub.csaude.org.mz/sesp/mysql:8.4.2g
     container_name: refapp-db
     stop_grace_period: 2h
     restart: unless-stopped
