@@ -27,7 +27,7 @@ else
     echo 'Database initialized'
 
     if grep -q 'A temporary password is generated for root@localhost:' mysql_startup_log.txt; then
-        temp_password=$(grep 'A temporary password is generated for root@localhost:' mysql_startup_log.txt | awk '{print $NF}')
+        temp_password=$(grep 'A temporary password is generated for root@localhost:' /var/log/mysql/mysql_startup_log.txt | awk '{print $NF}')
     else
         echo 'Temporary password not found in MySQL startup log'
     fi
