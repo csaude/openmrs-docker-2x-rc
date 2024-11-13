@@ -1,7 +1,7 @@
 name: refapp
 services:
   refapp-db:
-    image: hub.csaude.org.mz/sesp/mysql:8.4.2j
+    image: hub.csaude.org.mz/sesp/mysql:8.4.2
     container_name: refapp-db
     stop_grace_period: 2h
     restart: unless-stopped
@@ -25,7 +25,7 @@ services:
       - ./database/data:/var/lib/mysql
       - ./database/scripts:/scripts
   refapp-tomcat:
-    image: hub.csaude.org.mz/sesp/tomcat:9.0.91
+    image: hub.csaude.org.mz/sesp/tomcat:9.0.97
     container_name: refapp-tomcat
     stop_grace_period: 30m 
     restart: unless-stopped
@@ -45,6 +45,7 @@ services:
       - ./tomcat/conf/setenv.sh:/usr/local/tomcat/bin/setenv.sh
       - ./tomcat/logs:/usr/local/tomcat/logs
       - ./tomcat/data/webapps:/usr/local/tomcat/webapps
+      - ./tomcat/data/OpenMRS:/usr/local/tomcat/.OpenMRS
     healthcheck:
       test: "/usr/bin/mysql --user=root --password=root --execute \"SHOW DATABASES;\""
       interval: 2s
