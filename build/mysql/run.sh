@@ -87,7 +87,7 @@ if [ -f "/scripts/openmrs.sql" ]; then
     ALTER TABLE concept_reference_source MODIFY date_created DATETIME DEFAULT CURRENT_TIMESTAMP;
     ALTER TABLE concept_name MODIFY date_created DATETIME DEFAULT CURRENT_TIMESTAMP;
     SET GLOBAL innodb_lock_wait_timeout = 60;
-    SET GLOBAL sql_mode = 'NO_ENGINE_SUBSTITUTION';
+    SET GLOBAL sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
     COMMIT;
 EOF
 fi
@@ -162,5 +162,5 @@ done
 echo "Atualizando sql_mode para o valor original"
 # Restaura o valor original de sql_mode
 mysql -hlocalhost -uroot -p"$MYSQL_ROOT_PASSWORD" <<EOF
-SET GLOBAL sql_mode = '$original_sql_mode';
+SET GLOBAL sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 EOF
